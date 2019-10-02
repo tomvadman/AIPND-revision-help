@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # */AIPND-revision/intropyproject-classify-pet-images/classify_images.py
 #                                                                             
-# PROGRAMMER: 
-# DATE CREATED:                                 
+# PROGRAMMER: Tommy Vadman
+# DATE CREATED: 2019-09-23                                
 # REVISED DATE: 
 # PURPOSE: Create a function classify_images that uses the classifier function 
 #          to create the classifier labels and then compares the classifier 
@@ -12,7 +12,7 @@
 #             and as in_arg.dir for function call within main. 
 #            -The results dictionary as results_dic within classify_images 
 #             function and results for the functin call within main.
-#            -The CNN model architecture as model within classify_images function
+#            -The CNN model architecture as model wihtin classify_images function
 #             and in_arg.arch for the function call within main. 
 #           This function uses the extend function to add items to the list 
 #           that's the 'value' of the results dictionary. You will be adding the
@@ -65,4 +65,49 @@ def classify_images(images_dir, results_dic, model):
      Returns:
            None - results_dic is mutable data type so no return needed.         
     """
-    None 
+    
+    # Loop results_dic dictionary key:image_name, value: list_of_strings)
+    for image_name, result_dic_list in results_dic.items():
+        
+        # Create imageUrl
+        image_url = images_dir + "/" + image_name
+        
+        # Analyze picture with classifier and specified model.
+        cf_label = classifier(image_url, model)
+        
+        # remove whitespace and make cf_label to lower.
+        cf_label = cf_label.lower().strip()
+        
+        # save label to results_dic_list[2]
+        result_dic_list.append(cf_label)
+        
+        # check if cf_label exist in result_dic list.
+        # save cf_label_match_pet_image returned (int) to results_dic_list[3]
+        cf_label_match_pet_image_labels = cf_label_exist_in_list(cf_label, result_dic_list)
+        
+        result_dic_list.append(cf_label_match_pet_image_labels)
+        
+    return results_dic
+    
+def cf_label_exist_in_list(cf_label, listOfStrings):
+    """
+    Check if cf_label (string) exist in list.
+    Functions splits cf_label string with "," and returns 1 if match found.
+    Parameters: 
+      cf_label - a string from classifier output.
+      listOfString - a list of strings from parsed petImage file location.
+     Returns:
+           (int) 
+           1 if cf_label exist in listOfStrings.
+           0 if cf_label not exist in listOfStrings.
+    """
+    
+    cf_label_match = 0
+    # Loop label split and make each word lower and remove whitespace.
+    # Because we know that result_dic.value (list) is lower and includes no whitespaces.
+    for label in cf_label.split(","):
+        if(label.strip() in listOfStrings):
+            cf_label_match = 1
+            return cf_label_match
+
+        return cf_label_match

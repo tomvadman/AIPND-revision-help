@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # */AIPND-revision/intropyproject-classify-pet-images/get_pet_labels.py
 #                                                                             
-# PROGRAMMER: 
-# DATE CREATED:                                  
+# PROGRAMMER: Tommy Vadman
+# DATE CREATED: 2019-09-23                                 
 # REVISED DATE: 
 # PURPOSE: Create the function get_pet_labels that creates the pet labels from 
 #          the image's filename. This function inputs: 
@@ -18,7 +18,7 @@
 ##
 # Imports python modules
 from os import listdir
-
+import re
 # TODO 2: Define get_pet_labels function below please be certain to replace None
 #       in the return statement with results_dic dictionary that you create 
 #       with this function
@@ -40,6 +40,33 @@ def get_pet_labels(image_dir):
       List. The list contains for following item:
          index 0 = pet image label (string)
     """
+    results_dic = dict()
+    in_files = listdir(image_dir)
+    for idx in range(0, len(in_files), 1):
+    # Skips file if starts with . (like .DS_Store of Mac OSX) because it 
+    # isn't an pet image file
+        if in_files[idx][0] != ".":
+
+               # Removes _ and lower Case
+               # Example: Boston_terrier_02259.jpg > boston terrier 02259.jpg
+               pet_label = in_files[idx].replace("_"," ").lower()
+
+               # splitting string by regex expression (\d is a digit (a character in the range 0-9), 
+               # and + means 1 or more times. So, \d+ is 1 or more digits.)
+               # source reference
+               # https://stackoverflow.com/questions/2841550/what-does-d-mean-in-regular-expression-terms
+               # https://note.nkmk.me/en/python-split-rsplit-splitlines-re/
+               pet_label = re.split('\d+', pet_label)[0].strip()
+
+               # If filename doesn't already exist in dictionary add it and it's
+               # pet label - otherwise print an error message because indicates 
+               # duplicate files (filenames)
+               if in_files[idx] not in results_dic:
+                  results_dic[in_files[idx]] = [pet_label]
+
+               else:
+                   print("** Warning: Duplicate files exist in directory:", 
+                         in_files[idx])
     # Replace None with the results_dic dictionary that you created with this
     # function
-    return None
+    return results_dic

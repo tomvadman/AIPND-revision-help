@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # */AIPND-revision/intropyproject-classify-pet-images/adjust_results4_isadog.py
 #                                                                             
-# PROGRAMMER: 
-# DATE CREATED:                                 
+# PROGRAMMER: Tommy Vadman
+# DATE CREATED: 2019-09-23                                 
 # REVISED DATE: 
 # PURPOSE: Create a function adjust_results4_isadog that adjusts the results 
 #          dictionary to indicate whether or not the pet image label is of-a-dog, 
@@ -66,5 +66,54 @@ def adjust_results4_isadog(results_dic, dogfile):
                maltese) (string - indicates text file's filename)
     Returns:
            None - results_dic is mutable data type so no return needed.
-    """           
-    None
+    """
+    
+    dognames_dic = _get_dog_dic(dogfile)
+    
+    for key in results_dic:
+        
+        pet_image_labels = results_dic[key][0]
+        pet_image_labels_exist = 0
+        
+        cf_labels = results_dic[key][1]
+        cf_labels_exist = 0
+        
+        # Pet Image Labels IS of Dog (e.g. found in dognames_dic)
+        if pet_image_labels in dognames_dic:
+            pet_image_labels_exist = 1
+        # cf_labels IS of Dog (e.g. found in dognames_dic
+        if cf_labels in dognames_dic:
+            cf_labels_exist = 1
+     
+        results_dic[key].extend((pet_image_labels_exist, cf_labels_exist))
+def _get_dog_dic(dogfile):
+    """
+    *Private function*
+    Reads input file example: dognames.txt
+    Returns:
+           dognames_dic (dictionary)
+    """
+    
+    # Creates dognames dictionary to return.
+    dognames_dic = dict()
+    
+    # Reads in dognames from file, 1 name per line & automatically closes file
+    with open(dogfile, "r") as infile:
+   
+        # Processes each line in file until reaching EOF (end-of-file) by 
+        # processing line and adding dognames to dognames_dict with while loop
+        line = infile.readline()
+        
+        while line != "":
+            
+            # save only line if not allready exist in dognames_dict (only unique values in dict)
+            line = line.rstrip()
+            if line not in dognames_dic:
+                dognames_dic[line] = 1
+            else:
+                print(line + " allready exist in dognames_dic")
+            
+            # Reads in next line in file to be processed with while loop
+            # if this line isn't empty (EOF)
+            line = infile.readline()      
+    return dognames_dic
